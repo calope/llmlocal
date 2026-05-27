@@ -1,0 +1,21 @@
+{
+  "_comment": "Config para claude-code-router. Symlinkea a ~/.claude-code-router/config.json. Tras editar: ccr restart.",
+  "LOG": true,
+  "Providers": [
+    {
+      "name": "ollama-local",
+      "api_base_url": "http://localhost:11434/v1/chat/completions",
+      "api_key": "ollama",
+      "models": [
+        "deepseek-coder-v2:16b-lite-instruct-q4_K_M"
+      ]
+    }
+  ],
+  "Router": {
+    "_comment_strategy": "Modelo unico DeepSeek-V2 16B MoE: workhorse local. Si necesitas frontier, usa Claude Code (extension VS Code) directamente, no este router.",
+    "default": "ollama-local,deepseek-coder-v2:16b-lite-instruct-q4_K_M",
+    "background": "ollama-local,deepseek-coder-v2:16b-lite-instruct-q4_K_M",
+    "think": "ollama-local,deepseek-coder-v2:16b-lite-instruct-q4_K_M",
+    "longContext": "ollama-local,deepseek-coder-v2:16b-lite-instruct-q4_K_M"
+  }
+}

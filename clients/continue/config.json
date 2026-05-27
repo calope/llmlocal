@@ -1,0 +1,15 @@
+{
+  "_comment": "Continue.dev NO esta activo en este equipo (decision mayo 2026). Setup oficial = opencode CLI + Claude Code. Este archivo se conserva por si se activa Continue en el futuro.",
+  "models": [
+    {
+      "title": "DeepSeek-Coder-V2 16B MoE (local)",
+      "provider": "ollama",
+      "model": "deepseek-coder-v2:16b-lite-instruct-q4_K_M",
+      "apiBase": "http://localhost:11434"
+    }
+  ],
+  "tabAutocompleteOptions": {
+    "disable": true,
+    "_comment": "Para activar tab autocomplete, hacer pull de qwen2.5-coder:7b-base-q4_K_M (FIM, 4.5 GB) y configurar tabAutocompleteModel."
+  }
+}

@@ -1,0 +1,48 @@
+name: llmlocal
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: llmlocal-ollama
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ../models/ollama:/root/.ollama
+      # CA bundle del host (incluye Fortinet MITM corporativo).
+      # Sin esto, el pull de modelos a registry.ollama.ai falla con x509 unknown authority.
+      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+    environment:
+      # KEEP_ALIVE corto (10m): libera el modelo si no se usa, no se queda zombie 30 min.
+      # Tras pruebas con opencode descubrimos que el modelo cargado compite con CPU
+      # de otras sesiones aunque no se este usando activamente.
+      OLLAMA_KEEP_ALIVE: "10m"
+      # Solo 1 modelo en RAM a la vez: evita competencia CPU entre runners.
+      # Aprendido por las malas con qwen3-coder:30b + qwen2.5-coder:3b cargados a la vez.
+      OLLAMA_MAX_LOADED_MODELS: "1"
+      # Sweet-spot medido empiricamente en este HW (barrido 7/10/12/14, ver docs/tuning.md).
+      # 12 deja 2 hilos al kernel y resto del sistema sin caer en contencion (14 cae 25%).
+      OLLAMA_NUM_THREAD: "12"
+      # Un solo request a la vez evita fragmentar el KV cache cuando trabajamos solos.
+      OLLAMA_NUM_PARALLEL: "1"
+      # Flash Attention: implementacion mas eficiente del attention. +5-15% tok/s tipico.
+      OLLAMA_FLASH_ATTENTION: "1"
+      # KV cache cuantizado a q8_0: ~50% menos RAM con calidad casi identica.
+      OLLAMA_KV_CACHE_TYPE: "q8_0"
+      # Contexto 8K: suficiente para CLI directo (curl) o Aider (system prompt ligero).
+      # Subimos a 16K solo durante experimento opencode que termino siendo inviable en CPU.
+      OLLAMA_CONTEXT_LENGTH: "8192"
+      OLLAMA_HOST: "0.0.0.0"
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
+    # Cap de RAM: 10g para uso real (modelos 3B-8B). qwen3-coder:30b (18 GB) NO entra
+    # con este cap: queda como modelo solo para CLI directo via curl con make up alternativo.
+    # WSL config asociada: memory=18GB en .wslconfig.
+    deploy:
+      resources:
+        limits:
+          memory: 10g

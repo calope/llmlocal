@@ -1,0 +1,28 @@
+Eres un tecnico que redacta documentacion para luz (MkDocs Material, español).
+Tienes que producir un documento markdown completo a partir de la lista de
+bullets de abajo. Reglas:
+
+- Estructura: H1 titulo del doc, despues secciones H2 razonables (Contexto, Decision, Como aplicar, Referencias).
+- Español con acentos correctos (UTF-8, este doc va en luz/docs/, no en .sql).
+- Usa admonitions de mkdocs (!!! note / warning / tip) si encaja.
+- Tablas si una comparacion lo pide.
+- No inventes datos: si un bullet no da informacion suficiente, deja un TODO breve.
+- Final del documento: un bloque "## Resumen" de 2-3 lineas accionables.
+
+## Titulo
+
+Decision: gestion de CA corporativo en contenedores Docker
+
+## Bullets
+
+- Entorno: WSL2 + Docker, firewall corporativo Fortinet con MITM TLS.
+- Sintoma: `ollama pull`, npm install y pip install dentro de containers fallan con "x509: certificate signed by unknown authority".
+- Causa: el container trae el bundle CA de su imagen base (Debian/Ubuntu/Alpine), sin el CA Fortinet del host.
+- Host WSL ya tiene `/usr/local/share/ca-certificates/fortinet-ca.crt` instalado y en `/etc/ssl/certs/ca-certificates.crt`.
+- Fix Debian/Ubuntu: mount `/etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro` en el container.
+- Fix Alpine: mismo path destino es `/etc/ssl/cert.pem` (Alpine no usa el bundle Debian).
+- Fix Go binaries que no usen SSL_CERT_FILE estandar: pasar `SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt` como env var.
+- Aplicado en `~/Workspace/llmlocal/compose/docker-compose.yml` (Ollama, 2026-05-11). Resolvio el pull de modelos.
+- No aplica a `docker pull <imagen>` (el daemon ya usa los CAs del host).
+- Anti-patron: instalar CA dentro de cada Dockerfile (no reproducible entre equipos con CAs distintos).
+- Verificacion: `docker exec <container> curl -fsS https://registry.ollama.ai/` debe devolver != x509.

@@ -1,0 +1,49 @@
+Eres un revisor senior Python. Debajo va un fragmento de codigo de un servicio
+async. Analizalo y produce EXACTAMENTE esta estructura:
+
+## Problemas detectados
+- (lista de problemas con UNA linea por problema)
+
+## Refactor propuesto
+```python
+(codigo completo refactorizado, listo para pegar)
+```
+
+## Por que
+(2-3 frases explicando los cambios mas relevantes)
+
+Reglas:
+- Mantener la firma publica de fetch_user_orders.
+- Python 3.12+, type hints completos.
+- No inventes librerias: usa solo asyncio, httpx, dataclasses, typing.
+
+```python
+from typing import *
+import httpx
+import time
+
+class OrderService:
+    cache = {}  # cache compartida entre instancias
+
+    def __init__(self, base_url, timeout=10):
+        self.base = base_url
+        self.timeout = timeout
+
+    async def fetch_user_orders(self, user_id, fields=[]):
+        try:
+            if user_id in OrderService.cache:
+                return OrderService.cache[user_id]
+            time.sleep(0.5)  # esperar al rate limiter
+            r = httpx.get(f"{self.base}/users/{user_id}/orders", timeout=self.timeout)
+            data = r.json()
+            for o in data:
+                o["fetched_at"] = time.time()
+                if fields:
+                    for k in list(o.keys()):
+                        if k not in fields:
+                            del o[k]
+            OrderService.cache[user_id] = data
+            return data
+        except:
+            return []
+```

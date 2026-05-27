@@ -1,0 +1,43 @@
+Eres un DBA Oracle senior con experiencia en CBO 19c. Debajo va una query
+que en oke-desa ejecuta en 350 segundos haciendo 22 millones de buffer gets.
+Necesito que la refactorices.
+
+## Tu salida (exacta)
+
+### Problema raiz
+(1-2 frases tecnicas)
+
+### Refactor
+```sql
+(query Oracle 19c valida lista para pegar)
+```
+
+### Por que el plan deberia mejorar
+(2-3 frases mencionando explicitamente el operador del CBO que cambia)
+
+## Reglas
+
+- Oracle 19c (sin features 21c+, sin JSON_TABLE complejas).
+- Mantener la misma semantica de filtrado.
+- Sin acentos en el SQL (encoding ISO-8859-15 del proyecto).
+- Resultados deben ser identicos (mismas filas).
+- Se puede usar /*+ hints */ pero solo si lo justificas.
+
+## Query original
+
+```sql
+SELECT p.id_pol, p.nombre, p.cif_nif
+  FROM v_polizas_vivas p
+ WHERE p.estado = 'VIGENTE'
+   AND p.t_pol = 'AUTO'
+   AND ( REGEXP_LIKE(p.cif_nif, :search, 'i')
+      OR EXISTS (SELECT 1 FROM mt_personas pe
+                  WHERE pe.id_persona = p.id_tomador
+                    AND REGEXP_LIKE(pe.nombre || ' ' || pe.apellidos, :search, 'i'))
+      OR EXISTS (SELECT 1 FROM plz.objetos_cnd oc
+                  WHERE oc.id_pol = p.id_pol
+                    AND REGEXP_LIKE(oc.matricula, :search, 'i'))
+       )
+ ORDER BY p.id_pol DESC
+ FETCH FIRST 50 ROWS ONLY;
+```

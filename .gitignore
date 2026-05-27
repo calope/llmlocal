@@ -1,0 +1,8 @@
+models/
+llamacpp-sycl/build/
+llamacpp-sycl/llama.cpp/
+*.gguf
+*.log
+.env
+.env.*
+.aider*

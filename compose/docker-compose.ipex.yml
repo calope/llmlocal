@@ -1,0 +1,42 @@
+# Variante con Ollama + IPEX-LLM para acelerar con iGPU Intel Arc Xe-LPG.
+# Solo activar en Fase 4, cuando hayamos validado /dev/dxg y los drivers
+# Intel Level Zero accesibles desde el contenedor.
+#
+# Levantar con:
+#   docker compose -f compose/docker-compose.ipex.yml up -d
+#
+# Ref: https://github.com/intel/ipex-llm/blob/main/docs/mddocs/Quickstart/ollama_quickstart.md
+
+name: llmlocal-ipex
+
+services:
+  ollama:
+    image: intelanalytics/ipex-llm-inference-cpp-xpu:latest
+    container_name: llmlocal-ollama-ipex
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      # Comparte el mismo directorio que el Ollama CPU: el modelo GGUF descargado se reusa.
+      # El manifest interno de Ollama es compatible entre versiones CPU y IPEX.
+      - ../models/ollama:/root/.ollama
+      # CA bundle del host (Fortinet MITM corporativo, ver feedback_corporate_ca_in_containers).
+      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+    devices:
+      # WSL2 expone la GPU como /dev/dxg (paravirtualizada).
+      # Tambien intenta /dev/dri si esta disponible.
+      - /dev/dxg:/dev/dxg
+    environment:
+      OLLAMA_KEEP_ALIVE: "30m"
+      OLLAMA_HOST: "0.0.0.0:11434"
+      # CRITICO: fuerza que TODAS las capas vayan a GPU.
+      OLLAMA_NUM_GPU: "999"
+      # Selector Intel Level Zero (iGPU = device 0).
+      ONEAPI_DEVICE_SELECTOR: "level_zero:0"
+      # Activa SYCL_USE_CPU_BACKUP si el modelo no cabe entero en iGPU.
+      # SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS: "1"
+    command: bash -c "/llm/scripts/start-ollama.sh && tail -f /var/log/ollama.log"
+    deploy:
+      resources:
+        limits:
+          memory: 16g
