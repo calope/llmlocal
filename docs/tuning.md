@@ -60,9 +60,9 @@ cliente — sin esto, el KV cache se dispara y empieza swap.
 - `OLLAMA_NUM_PARALLEL > 1` si trabajas solo: fragmenta el KV cache y baja el throughput
   por sesion. Solo subir si vas a tener varios clientes a la vez.
 
-## Prueba real con doc de luz (`make demo`)
+## Prueba real con documento de ejemplo (`make demo`)
 
-Archivo: `luz/docs/informes/comparativa-bun-pnpm.md` (84 lineas, 1023 tokens prompt).
+Documento de ejemplo: 84 lineas, 1023 tokens prompt.
 
 | Estado | prompt eval | generation eval | total |
 |---|---|---|---|

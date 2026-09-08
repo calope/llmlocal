@@ -1,6 +1,6 @@
 # Criterios test 02 — SQL Oracle refactor
 
-Caso real documentado en luz / feedback_or_exists_kills_cbo.md. Diagnostico:
+Caso real documentado en feedback_or_exists_kills_cbo.md. Diagnostico:
 
 **OR-EXISTS-EXISTS sobre tablas grandes** rompe el CBO 19c — no puede usar
 indices por rama porque la condicion es disyuntiva. Plan resultante: FULL

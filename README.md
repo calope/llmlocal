@@ -57,7 +57,7 @@ make health                        # container + endpoint + tuning activo + mode
 make stats                         # CPU/RAM container + modelos en RAM + disco
 make bench MODEL=...               # bench corto (2 prompts)
 make bench-ext MODEL=... REPS=3    # bench serio (warm-up + N iters + min/max)
-make demo                          # demo reproducible con un doc de luz
+make demo                          # demo reproducible con un documento de ejemplo
 ```
 
 Healthcheck del compose espera a que Ollama responda antes de devolver el control.

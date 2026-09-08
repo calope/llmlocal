@@ -84,7 +84,7 @@ Claude Code se invoca con el panel lateral de VS Code o con `claude` desde termi
 |-----|--------|----------|
 | `kubernetes` | ✓ | `kubectl` operations vía MCP. KUBECONFIG=~/.kube/config |
 | `mermaid` | ✓ | Generar diagramas Mermaid desde lenguaje natural |
-| `plantuml` | ✓ | Diagramas PlantUML/C4 para luz docs |
+| `plantuml` | ✓ | Diagramas PlantUML/C4 para documentacion tecnica |
 
 ### Repositorios remotos
 

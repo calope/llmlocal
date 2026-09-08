@@ -3,8 +3,8 @@
 Suite de 3 tests representativos del trabajo real con MutuaTFE:
 
 1. Refactor Python async con bugs sutiles (asyncio, mutable defaults, cache, errores)
-2. Refactor SQL Oracle 19c (caso real OR-EXISTS-EXISTS, doc en luz)
-3. Sintesis tecnica desde bullets (estilo docs luz)
+2. Refactor SQL Oracle 19c (caso real OR-EXISTS-EXISTS)
+3. Sintesis tecnica desde bullets (estilo documentacion tecnica)
 
 Prompts y criterios en [`tests/eval/`](../tests/eval/). Respuestas guardadas en
 [`tests/results/<modelo>/`](../tests/results/) reproducibles con `make qeval MODEL=...`.
