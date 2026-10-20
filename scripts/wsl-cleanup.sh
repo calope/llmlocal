@@ -54,8 +54,8 @@ echo
 
 # 3. Tags viejos tinerfe-ords / auth / jobs (deja :latest + el ultimo numerico)
 echo "[3] Tags antiguos tinerfe-ords/auth/jobs (mantengo :latest)"
-for repo in registry.gitlab.com/mutuatfe/tinerfe/ords \
-            registry.gitlab.com/mutuatfe/tinerfe/ords/jobs \
+for repo in registry.gitlab.com/mutuatfe/tinerfe/rds \
+            registry.gitlab.com/mutuatfe/tinerfe/rds/jobs \
             registry.gitlab.com/mutuatfe/tinerfe/tinerfe-auth \
             registry.gitlab.com/mutuatfe/tinerfe/tinerfe-db \
             registry.gitlab.com/mutuatfe/tinerfe/tinerfe-doc \
